@@ -5,6 +5,7 @@ namespace App\Controller;
 use ApiPlatform\Api\IriConverterInterface;
 use App\Entity\UserSession;
 use App\Repository\UserRepository;
+use App\Repository\UserSessionRepository;
 use App\Service\Session\SessionService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,6 +19,7 @@ class AuthenticationController extends AbstractController
     public function __construct(
         private SessionService $sessionService,
         private UserRepository $userRepository,
+        private UserSessionRepository $userSessionRepository,
         private IriConverterInterface $iriConverter,
         private EntityManagerInterface $entityManager
     ) {
@@ -47,13 +49,7 @@ class AuthenticationController extends AbstractController
         );
     }
 
-    #[Route('/token', name: 'app_auth_token', methods: ['POST'])]
-    public function authToken(Request $request): Response
-    {
-        return $this->authCredentials($request);
-    }
-
-    #[Route('/credentials', name: 'app_auth_credentials', methods: ['POST'])]
+    #[Route('/user', name: 'app_auth_credentials', methods: ['POST'])]
     public function authCredentials(Request $request): Response
     {
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) return $this->error();
@@ -79,5 +75,11 @@ class AuthenticationController extends AbstractController
                 'Location' => $this->iriConverter->getIriFromResource($userSession)
             ]
         );
+    }
+
+    #[Route('/token', name: 'app_auth_token', methods: ['POST'])]
+    public function authToken(Request $request): Response
+    {
+        return $this->authCredentials($request);
     }
 }

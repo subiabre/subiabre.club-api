@@ -19,7 +19,7 @@ final class AuthenticationDecorator implements OpenApiFactoryInterface
         $pathItem = new Model\PathItem(
             ref: 'Auth',
             get: new Model\Operation(
-                operationId: 'getCredentialsItem',
+                operationId: 'getUserSessionItem',
                 tags: ['Auth'],
                 responses: [
                     '204' => [
@@ -92,7 +92,7 @@ final class AuthenticationDecorator implements OpenApiFactoryInterface
             ),
         );
 
-        $openApi->getPaths()->addPath('/api/auth/credentials', $pathItem);
+        $openApi->getPaths()->addPath('/api/auth/user', $pathItem);
 
         $pathItem = new Model\PathItem(
             ref: 'Auth',
