@@ -38,7 +38,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $username = null;
 
     #[ORM\Column]
-    #[API\ApiProperty(readable: false)]
+    #[API\ApiProperty(readable: false, writable: false)]
     private array $roles = [];
 
     /**
@@ -51,6 +51,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserSession::class, orphanRemoval: true)]
+    #[API\ApiProperty(writable: false)]
     private Collection $userSessions;
 
     public function __construct()
