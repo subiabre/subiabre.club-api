@@ -11,7 +11,7 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Security\Core\Security;
 
-final class CurrentUserExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
+final class UserSessionCurrentUserExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
 {
     private Security $security;
     private UserRepository $userRepository;
