@@ -45,7 +45,7 @@ class SessionService
             array_merge([
                 'user' => $user->getId(),
             ], array_filter([
-                'exp' => (new \DateTime(sprintf('+%d seconds', $lifetime)))->getTimestamp(),
+                'exp' => $lifetime ? (new \DateTime(sprintf('+%d seconds', $lifetime)))->getTimestamp() : $lifetime,
             ])),
             $this->appSecret,
             'HS256'
