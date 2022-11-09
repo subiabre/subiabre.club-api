@@ -45,7 +45,7 @@ final class AuthenticationDecorator implements OpenApiFactoryInterface
         $pathItem = new Model\PathItem(
             ref: 'Auth',
             post: new Model\Operation(
-                operationId: 'postCredentialsItem',
+                operationId: 'postUserAuth',
                 tags: ['Auth'],
                 responses: [
                     '204' => [
@@ -97,7 +97,7 @@ final class AuthenticationDecorator implements OpenApiFactoryInterface
         $pathItem = new Model\PathItem(
             ref: 'Auth',
             post: new Model\Operation(
-                operationId: 'postTokenItem',
+                operationId: 'postUserSessionTokenAuth',
                 tags: ['Auth'],
                 responses: [
                     '204' => [
