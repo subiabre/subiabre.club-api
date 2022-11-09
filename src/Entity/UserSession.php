@@ -14,8 +14,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Entity(repositoryClass: UserSessionRepository::class)]
 #[UniqueEntity(fields: ['sessionId'])]
 #[API\ApiResource(
-    normalizationContext: ['groups' => ['user:read']],
-    denormalizationContext: ['groups' => ['user:write']],
     uriTemplate: '/users/{id}/sessions',
     uriVariables: [
         'id' => new Link(
@@ -51,24 +49,25 @@ class UserSession
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['user:read'])]
     #[ORM\ManyToOne(inversedBy: 'userSessions')]
     #[ORM\JoinColumn(nullable: false)]
+    #[API\ApiProperty(writable: false)]
     private ?User $user = null;
 
     #[ORM\Column(length: 32)]
+    #[API\ApiProperty(readable: false, writable: false)]
     private ?string $sessionId = null;
 
-    #[Groups(['user:read'])]
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[API\ApiProperty(writable: false)]
     private ?\DateTimeInterface $dateCreated = null;
 
-    #[Groups(['user:read'])]
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[API\ApiProperty(writable: false)]
     private ?\DateTimeInterface $dateExpires = null;
 
-    #[Groups(['user:read'])]
     #[ORM\Column(length: 255)]
+    #[API\ApiProperty(writable: false)]
     private ?string $userAgent = null;
 
     public function getId(): ?int

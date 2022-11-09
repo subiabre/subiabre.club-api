@@ -11,14 +11,11 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity(fields: ['username'])]
 #[API\ApiResource(
-    normalizationContext: ['groups' => ['user:read']],
-    denormalizationContext: ['groups' => ['user:write']],
     operations: [
         new API\GetCollection(),
         new API\Post(processor: UserStateProcessor::class),
@@ -33,22 +30,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['user:read'])]
+    #[API\ApiProperty(writable: false)]
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
-    #[Groups(['user:read', 'user:write'])]
     #[Assert\NotBlank()]
     private ?string $username = null;
 
     #[ORM\Column]
+    #[API\ApiProperty(readable: false)]
     private array $roles = [];
 
     /**
      * @var string The hashed password
      */
     #[ORM\Column]
-    #[Groups(['user:write'])]
+    #[API\ApiProperty(readable: false)]
     #[Assert\NotBlank()]
     #[Assert\Length(min: 4)]
     private ?string $password = null;
