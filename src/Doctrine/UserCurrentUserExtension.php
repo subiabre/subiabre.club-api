@@ -6,22 +6,22 @@ use ApiPlatform\Doctrine\Orm\Extension\QueryCollectionExtensionInterface;
 use ApiPlatform\Doctrine\Orm\Extension\QueryItemExtensionInterface;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use ApiPlatform\Metadata\Operation;
-use App\Entity\UserSession;
 use App\Repository\UserRepository;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Security\Core\Security;
 
-final class UserSessionCurrentUserExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
+final class UserCurrentUserExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
 {
-    private Security $security;
-    private UserRepository $userRepository;
+    private array $accepts;
 
     public function __construct(
-        Security $security,
-        UserRepository $userRepository
+        private Security $security,
+        private UserRepository $userRepository
     ) {
-        $this->security = $security;
-        $this->userRepository = $userRepository;
+        $this->accepts = [
+            UserSession::class,
+            UserKey::class
+        ];
     }
 
     public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, Operation $operation = null, array $context = []): void
@@ -37,7 +37,8 @@ final class UserSessionCurrentUserExtension implements QueryCollectionExtensionI
     private function addWhere(QueryBuilder $queryBuilder, string $resourceClass): void
     {
         $user = $this->security->getUser();
-        if (UserSession::class !== $resourceClass || !$user || null === $userId = $this->userRepository->findByUser($user)?->getId()) {
+
+        if (!in_array($resourceClass, $this->accepts) || !$user || null === $userId = $this->userRepository->findByUser($user)?->getId()) {
             return;
         }
 
