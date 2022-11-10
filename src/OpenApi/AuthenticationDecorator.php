@@ -97,7 +97,7 @@ final class AuthenticationDecorator implements OpenApiFactoryInterface
         $pathItem = new Model\PathItem(
             ref: 'Auth',
             post: new Model\Operation(
-                operationId: 'postUserSessionTokenAuth',
+                operationId: 'postUserKeyAuth',
                 tags: ['Auth'],
                 responses: [
                     '204' => [
@@ -117,7 +117,7 @@ final class AuthenticationDecorator implements OpenApiFactoryInterface
                         'description' => 'Invalid request',
                     ],
                 ],
-                summary: 'Authenticates a User resource via a token.',
+                summary: 'Authenticates a User resource via a UserKey.',
                 requestBody: new Model\RequestBody(
                     description: 'The User token',
                     required: true,
@@ -125,10 +125,10 @@ final class AuthenticationDecorator implements OpenApiFactoryInterface
                         'application/json' => [
                             'schema' => [
                                 'properties' => [
-                                    'token' => [
+                                    'key' => [
                                         'type' => 'string',
                                         'required' => true,
-                                        'description' => 'A JWT created to authenticate an UserSession for an User resource'
+                                        'description' => 'The value of an UserKey created to authenticate an UserSession for an User resource'
                                     ],
                                 ]
                             ],
@@ -139,7 +139,7 @@ final class AuthenticationDecorator implements OpenApiFactoryInterface
             ),
         );
 
-        $openApi->getPaths()->addPath('/api/auth/token', $pathItem);
+        $openApi->getPaths()->addPath('/api/auth/key', $pathItem);
 
         return $openApi;
     }
