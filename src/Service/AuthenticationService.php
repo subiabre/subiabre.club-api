@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Service\Session;
+namespace App\Service;
 
 use App\Entity\User;
+use App\Entity\UserKey;
 use App\Entity\UserSession;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -10,7 +11,7 @@ use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionUtils;
 
-class SessionService
+class AuthenticationService
 {
     public const CONFIG_SESSION_LIFETIME = 'session_lifetime';
     public const CONFIG_CORS_ALLOW_ORIGIN = 'allow_origin';
@@ -31,6 +32,23 @@ class SessionService
     public function getConfig(): array
     {
         return $this->config;
+    }
+
+    /**
+     * Generates a SHA-256 hash from the `APP_SECRET` + `$data` + random_bytes
+     * @param array $data The data to be included in the hash
+     * @return string
+     */
+    public function hashWithSecret(array $data = []): string
+    {
+        return hash(
+            'sha256',
+            join('', [
+                $this->appSecret,
+                ...$data,
+                random_bytes(32)
+            ])
+        );
     }
 
     /**

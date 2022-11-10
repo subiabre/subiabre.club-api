@@ -24,7 +24,7 @@ services:
         decorates: 'api_platform.openapi.factory'
         arguments: ['@.inner']
 
-    App\Service\Session\SessionService:
+    App\Service\AuthenticationService:
         arguments:
             - '%env(CORS_ALLOW_ORIGIN)%'
             - '%env(SESSION_LIFETIME)%'
