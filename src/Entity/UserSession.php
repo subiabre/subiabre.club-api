@@ -9,7 +9,6 @@ use App\State\UserSessionStateProcessor;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UserSessionRepository::class)]
 #[UniqueEntity(fields: ['sessionId'])]
@@ -22,7 +21,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
         )
     ],
     operations: [
-        new API\GetCollection(),
+        new API\GetCollection(security: "is_granted('USER_IS', request)"),
     ]
 )]
 #[API\ApiResource(
@@ -43,7 +42,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
 )]
 class UserSession
 {
-    #[Groups(['user:read'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]

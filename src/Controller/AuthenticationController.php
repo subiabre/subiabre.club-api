@@ -6,7 +6,7 @@ use ApiPlatform\Api\IriConverterInterface;
 use App\Entity\UserSession;
 use App\Repository\UserRepository;
 use App\Repository\UserSessionRepository;
-use App\Service\Session\SessionService;
+use App\Service\AuthenticationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,18 +17,18 @@ use Symfony\Component\Routing\Annotation\Route;
 class AuthenticationController extends AbstractController
 {
     public function __construct(
-        private SessionService $sessionService,
         private UserRepository $userRepository,
         private UserSessionRepository $userSessionRepository,
+        private AuthenticationService $authenticationService,
         private IriConverterInterface $iriConverter,
         private EntityManagerInterface $entityManager
     ) {
     }
 
-    private function error(int $status = 400, string $message = 'check that the Content-Type header is "application/json"'): Response
+    private function error(string $message = 'check that the Content-Type header is "application/json"', int $status = 400): Response
     {
         return $this->json(
-            [ 'error' => sprintf('Invalid login request: %s.', $message) ],
+            [ 'error' => sprintf('Invalid Auth request: %s.', $message) ],
             $status
         );
     }
@@ -39,6 +39,8 @@ class AuthenticationController extends AbstractController
         if (!$request->getSession()->isStarted()) $request->getSession()->start();
         
         $userSession = $this->userSessionRepository->findOneBySession($request->getSession());
+
+        if (!$userSession) return $this->error("Could not find session");
 
         return new Response(
             null,
@@ -63,7 +65,7 @@ class AuthenticationController extends AbstractController
         $userSession->setSessionId($request->getSession()->getId());
         $userSession->setUserAgent($request->headers->get('User-Agent'));
         $userSession->setDateCreated(new \DateTime());
-        $userSession = $this->sessionService->refreshUserSession($userSession);
+        $userSession = $this->authenticationService->refreshUserSession($userSession);
 
         $this->entityManager->persist($userSession);
         $this->entityManager->flush();
@@ -77,8 +79,8 @@ class AuthenticationController extends AbstractController
         );
     }
 
-    #[Route('/token', name: 'app_auth_token', methods: ['POST'])]
-    public function authToken(Request $request): Response
+    #[Route('/key', name: 'app_auth_key', methods: ['POST'])]
+    public function authKey(Request $request): Response
     {
         return $this->authCredentials($request);
     }

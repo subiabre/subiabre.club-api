@@ -54,9 +54,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[API\ApiProperty(writable: false)]
     private Collection $userSessions;
 
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserKey::class, orphanRemoval: true)]
+    #[API\ApiProperty(writable: false, readable: false)]
+    private Collection $userKeys;
+
     public function __construct()
     {
         $this->userSessions = new ArrayCollection();
+        $this->userKeys = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -153,6 +158,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($userSession->getUser() === $this) {
                 $userSession->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserKey>
+     */
+    public function getUserKeys(): Collection
+    {
+        return $this->userKeys;
+    }
+
+    public function addUserKey(UserKey $userKey): self
+    {
+        if (!$this->userKeys->contains($userKey)) {
+            $this->userKeys->add($userKey);
+            $userKey->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserKey(UserKey $userKey): self
+    {
+        if ($this->userKeys->removeElement($userKey)) {
+            // set the owning side to null (unless already changed)
+            if ($userKey->getUser() === $this) {
+                $userKey->setUser(null);
             }
         }
 
