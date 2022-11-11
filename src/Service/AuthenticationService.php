@@ -35,20 +35,23 @@ class AuthenticationService
     }
 
     /**
-     * Generates a SHA-256 hash from the `APP_SECRET` + `$data` + random_bytes
-     * @param array $data The data to be included in the hash
-     * @return string
+     * Generates a SHA-256 hash from the `APP_SECRET` + `UserIdentifier` + timestamp + random_bytes
+     * @param UserKey $key The UserKey to be updated
+     * @return UserKey
      */
-    public function hashWithSecret(array $data = []): string
+    public function updateUserKeyValue(UserKey $key): UserKey
     {
-        return hash(
+        $key->setValue(hash(
             'sha256',
             join('', [
                 $this->appSecret,
-                ...$data,
+                $key->getUser()?->getUserIdentifier(),
+                microtime(true),
                 random_bytes(32)
             ])
-        );
+        ));
+
+        return $key;
     }
 
     /**

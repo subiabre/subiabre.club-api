@@ -2,8 +2,10 @@
 
 namespace App\Command;
 
+use App\Entity\UserKey;
 use App\Repository\UserRepository;
 use App\Service\AuthenticationService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -20,7 +22,8 @@ class UserKeyCreateCommand extends Command
 {
     public function __construct(
         private UserRepository $userRepository,
-        private AuthenticationService $authenticationService
+        private AuthenticationService $authenticationService,
+        private EntityManagerInterface $entityManager
     )
     {
         parent::__construct();
@@ -49,10 +52,17 @@ class UserKeyCreateCommand extends Command
             return Command::FAILURE;
         }
 
-        $token = $this->authenticationService->createUserSessionToken($user, $input->getOption('expires') ? $input->getOption('lifetime') : null);
+        $key = new UserKey();
+        $key->setUser($user);
+        $key = $this->authenticationService->updateUserKeyValue($key);
 
-        $io->success("The token was created successfully");
-        $io->writeln($token);
+        $this->entityManager->persist($key);
+        $this->entityManager->flush();        
+
+        $io->success([
+            "The UserKey was created successfully:",
+            $key->getValue()
+        ]);
 
         return Command::SUCCESS;
     }
