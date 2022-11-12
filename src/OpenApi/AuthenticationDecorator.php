@@ -119,13 +119,13 @@ final class AuthenticationDecorator implements OpenApiFactoryInterface
                 ],
                 summary: 'Authenticates a User resource via a UserKey.',
                 requestBody: new Model\RequestBody(
-                    description: 'The User token',
+                    description: 'The UserKey',
                     required: true,
                     content: new \ArrayObject([
                         'application/json' => [
                             'schema' => [
                                 'properties' => [
-                                    'key' => [
+                                    'value' => [
                                         'type' => 'string',
                                         'required' => true,
                                         'description' => 'The value of an UserKey created to authenticate an UserSession for an User resource'

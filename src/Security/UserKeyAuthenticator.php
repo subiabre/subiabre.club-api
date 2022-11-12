@@ -37,7 +37,7 @@ class UserKeyAuthenticator extends AbstractAuthenticator
     public function authenticate(Request $request): Passport
     {
         try {
-            $key = $this->userKeyRepository->findOneBy(['value' => json_decode($request->getContent(), true)['key']]);
+            $key = $this->userKeyRepository->findOneBy(['value' => json_decode($request->getContent(), true)['value']]);
 
             if (!$key) throw new AuthenticationException();
 
