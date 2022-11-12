@@ -10,8 +10,8 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 class UserStateProcessor implements ProcessorInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManagerInterface,
-        private UserPasswordHasherInterface $userPasswordHasherInterface
+        private EntityManagerInterface $entityManager,
+        private UserPasswordHasherInterface $userPasswordHasher
     ) {
     }
     
