@@ -31,12 +31,8 @@ class UserKeyCreateCommand extends Command
 
     protected function configure(): void
     {
-        $sessionLifetime = $this->authenticationService->getConfig()[AuthenticationService::CONFIG_SESSION_LIFETIME];
-
         $this
             ->addArgument('username', InputArgument::REQUIRED, 'The username of the User to be authenticated with this token')
-            ->addOption('expires', null, InputOption::VALUE_NONE, 'Should this token expire?')
-            ->addOption('lifetime', null, InputOption::VALUE_OPTIONAL, 'If the token is set to expire this will mark for how long its valid',  $sessionLifetime)
         ;
     }
 
