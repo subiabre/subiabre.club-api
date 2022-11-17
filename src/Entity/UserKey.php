@@ -31,15 +31,14 @@ use Doctrine\ORM\Mapping as ORM;
     ]
 )]
 #[API\ApiResource(
-    uriTemplate: '/users/{id}/keys/{key}',
+    uriTemplate: '/users/{id}/keys/{keyId}',
     uriVariables: [
         'id' => new Link(
             fromClass: User::class,
             toProperty: 'user'
         ),
-        'key' => new Link(
-            fromClass: UserKey::class,
-            fromProperty: 'value'
+        'keyId' => new Link(
+            fromClass: UserKey::class
         )
     ],
     operations: [
@@ -53,7 +52,6 @@ class UserKey
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[API\ApiProperty(readable: false, identifier: false)]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'userKeys')]
@@ -62,7 +60,7 @@ class UserKey
     private ?User $user = null;
 
     #[ORM\Column(length: 64)]
-    #[API\ApiProperty(writable: false, identifier: true)]
+    #[API\ApiProperty(writable: false)]
     private ?string $value = null;
 
     public function getId(): ?int
