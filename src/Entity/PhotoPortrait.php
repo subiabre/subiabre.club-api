@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata as API;
 use App\Repository\PhotoPortraitRepository;
+use App\State\PhotoPortraitStateProvider;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -13,22 +14,26 @@ use Symfony\Component\Validator\Constraints as Assert;
     uriVariables: [
         'id' => new API\Link(
             fromClass: Photo::class,
+            toProperty: 'photo'
         ),
         'mediaId' => new API\Link(
             fromClass: PhotoMedia::class,
-            toClass: 'photoMedia'
+            toProperty: 'photoMedia'
         )
     ],
     operations: [
         new API\GetCollection(),
-        new API\Post()
+        new API\Post(
+            provider: PhotoPortraitStateProvider::class
+        )
     ]
 )]
 #[API\ApiResource(
     uriTemplate: '/photos/{id}/media/{mediaId}/portraits/{portraitId}',
     uriVariables: [
         'id' => new API\Link(
-            fromClass: Photo::class
+            fromClass: Photo::class,
+            toProperty: 'photo'
         ),
         'mediaId' => new API\Link(
             fromClass: PhotoMedia::class,
@@ -55,6 +60,11 @@ class PhotoPortrait
     #[ORM\ManyToOne(inversedBy: 'photoPortraits')]
     #[ORM\JoinColumn(nullable: false)]
     private ?People $people = null;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    #[API\ApiProperty(writable: false)]
+    private ?Photo $photo = null;
 
     #[ORM\ManyToOne(inversedBy: 'photoPortraits')]
     #[ORM\JoinColumn(nullable: false)]
@@ -94,6 +104,18 @@ class PhotoPortrait
     public function setPeople(?People $people): self
     {
         $this->people = $people;
+
+        return $this;
+    }
+
+    public function getPhoto(): ?Photo
+    {
+        return $this->photo;
+    }
+
+    public function setPhoto(?Photo $photo): self
+    {
+        $this->photo = $photo;
 
         return $this;
     }
