@@ -3,27 +3,24 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata as API;
-use ApiPlatform\Metadata\Delete;
-use ApiPlatform\Metadata\GetCollection;
-use ApiPlatform\Metadata\Link;
-use ApiPlatform\Metadata\Post;
 use App\Repository\UserKeyRepository;
 use App\State\UserKeyStateProcessor;
 use App\State\UserKeyStateProvider;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserKeyRepository::class)]
 #[API\ApiResource(
     uriTemplate: '/users/{id}/keys',
     uriVariables: [
-        'id' => new Link(
+        'id' => new API\Link(
             fromClass: User::class,
             toProperty: 'user'
         )
     ],
     operations: [
-        new GetCollection(security: "is_granted('USER_IS', request)"),
-        new Post(
+        new API\GetCollection(security: "is_granted('USER_IS', request)"),
+        new API\Post(
             provider: UserKeyStateProvider::class,
             processor: UserKeyStateProcessor::class,
             security: "is_granted('USER_IS', request)"
@@ -33,16 +30,17 @@ use Doctrine\ORM\Mapping as ORM;
 #[API\ApiResource(
     uriTemplate: '/users/{id}/keys/{keyId}',
     uriVariables: [
-        'id' => new Link(
+        'id' => new API\Link(
             fromClass: User::class,
             toProperty: 'user'
         ),
-        'keyId' => new Link(
+        'keyId' => new API\Link(
             fromClass: UserKey::class
         )
     ],
     operations: [
-        new Delete(
+        new API\Get(),
+        new API\Delete(
             security: "is_granted('USER_IS', request)"
         )
     ]
@@ -56,12 +54,16 @@ class UserKey
 
     #[ORM\ManyToOne(inversedBy: 'userKeys')]
     #[ORM\JoinColumn(nullable: false)]
-    #[API\ApiProperty(writable: false, readable: false)]
+    #[API\ApiProperty(writable: false)]
     private ?User $user = null;
 
     #[ORM\Column(length: 64)]
     #[API\ApiProperty(writable: false)]
     private ?string $value = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[API\ApiProperty(writable: false)]
+    private ?\DateTimeInterface $dateCreated = null;
 
     public function getId(): ?int
     {
@@ -88,6 +90,18 @@ class UserKey
     public function setValue(string $value): self
     {
         $this->value = $value;
+
+        return $this;
+    }
+
+    public function getDateCreated(): ?\DateTimeInterface
+    {
+        return $this->dateCreated;
+    }
+
+    public function setDateCreated(\DateTimeInterface $dateCreated): self
+    {
+        $this->dateCreated = $dateCreated;
 
         return $this;
     }

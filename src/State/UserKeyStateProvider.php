@@ -23,6 +23,7 @@ class UserKeyStateProvider implements ProviderInterface
 
         $key = new UserKey();
         $key->setUser($user);
+        $key->setDateCreated(new \DateTime());
 
         return $key;
     }

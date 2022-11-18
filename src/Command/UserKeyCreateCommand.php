@@ -50,6 +50,7 @@ class UserKeyCreateCommand extends Command
 
         $key = new UserKey();
         $key->setUser($user);
+        $key->setDateCreated(new \DateTime());
         $key = $this->authenticationService->updateUserKeyValue($key);
 
         $this->entityManager->persist($key);

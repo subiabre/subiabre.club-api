@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata as API;
-use ApiPlatform\Metadata\Link;
 use App\Repository\UserSessionRepository;
 use App\State\UserSessionStateProcessor;
 use Doctrine\DBAL\Types\Types;
@@ -15,7 +14,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 #[API\ApiResource(
     uriTemplate: '/users/{id}/sessions',
     uriVariables: [
-        'id' => new Link(
+        'id' => new API\Link(
             fromClass: User::class,
             toProperty: 'user'
         )
@@ -27,11 +26,11 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 #[API\ApiResource(
     uriTemplate: '/users/{id}/sessions/{sessionId}',
     uriVariables: [
-        'id' => new Link(
+        'id' => new API\Link(
             fromClass: User::class,
             toProperty: 'user'
         ),
-        'sessionId' => new Link(
+        'sessionId' => new API\Link(
             fromClass: UserSession::class
         )
     ],
