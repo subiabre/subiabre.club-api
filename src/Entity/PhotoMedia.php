@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata as API;
 use App\Repository\PhotoMediaRepository;
+use App\State\PhotoMediaStateProvider;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -23,7 +24,9 @@ use Symfony\Component\Validator\Constraints as Assert;
     ],
     operations: [
         new API\GetCollection(),
-        new API\Post()
+        new API\Post(
+            provider: PhotoMediaStateProvider::class
+        )
     ]
 )]
 #[API\ApiResource(
