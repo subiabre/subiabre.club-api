@@ -3,27 +3,26 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata as API;
-use App\Repository\PhotoPersonRepository;
+use App\Repository\PhotoImageRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity(repositoryClass: PhotoPersonRepository::class)]
-#[UniqueEntity(fields: ['name'])]
+#[ORM\Entity(repositoryClass: PhotoImageRepository::class)]
 #[API\ApiResource(
-    uriTemplate: '/photo/people',
+    uriTemplate: '/photo/image',
     operations: [
         new API\GetCollection(),
         new API\Post()
     ]
 )]
 #[API\ApiResource(
-    uriTemplate: '/photo/people/{id}',
+    uriTemplate: '/photo/image/{id}',
     uriVariables: [
         'id' => new API\Link(
-            fromClass: PhotoPerson::class
+            fromClass: PhotoImage::class
         )
     ],
     operations: [
@@ -33,23 +32,28 @@ use Symfony\Component\Validator\Constraints as Assert;
         new API\Patch()
     ]
 )]
-class PhotoPerson
+class PhotoImage
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: Types::TEXT)]
+    #[Assert\Url()]
     #[Assert\NotBlank()]
-    private ?string $name = null;
+    private ?string $url = null;
 
-    #[ORM\OneToMany(mappedBy: 'person', targetEntity: PhotoImagePortrait::class)]
+    #[ORM\OneToMany(mappedBy: 'image', targetEntity: PhotoImagePortrait::class, orphanRemoval: true)]
     private Collection $portraits;
+
+    #[ORM\ManyToMany(targetEntity: PhotoExhibit::class, mappedBy: 'images')]
+    private Collection $exhibits;
 
     public function __construct()
     {
         $this->portraits = new ArrayCollection();
+        $this->exhibits = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -57,14 +61,14 @@ class PhotoPerson
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getUrl(): ?string
     {
-        return $this->name;
+        return $this->url;
     }
 
-    public function setName(string $name): self
+    public function setUrl(string $url): self
     {
-        $this->name = $name;
+        $this->url = $url;
 
         return $this;
     }
@@ -81,7 +85,7 @@ class PhotoPerson
     {
         if (!$this->portraits->contains($portrait)) {
             $this->portraits->add($portrait);
-            $portrait->setPerson($this);
+            $portrait->setImage($this);
         }
 
         return $this;
@@ -91,9 +95,36 @@ class PhotoPerson
     {
         if ($this->portraits->removeElement($portrait)) {
             // set the owning side to null (unless already changed)
-            if ($portrait->getPerson() === $this) {
-                $portrait->setPerson(null);
+            if ($portrait->getImage() === $this) {
+                $portrait->setImage(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PhotoExhibit>
+     */
+    public function getExhibits(): Collection
+    {
+        return $this->exhibits;
+    }
+
+    public function addExhibit(PhotoExhibit $exhibit): self
+    {
+        if (!$this->exhibits->contains($exhibit)) {
+            $this->exhibits->add($exhibit);
+            $exhibit->addImage($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExhibit(PhotoExhibit $exhibit): self
+    {
+        if ($this->exhibits->removeElement($exhibit)) {
+            $exhibit->removeImage($this);
         }
 
         return $this;
