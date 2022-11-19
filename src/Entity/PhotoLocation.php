@@ -5,8 +5,11 @@ namespace App\Entity;
 use ApiPlatform\Metadata as API;
 use App\Repository\PhotoLocationRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PhotoLocationRepository::class)]
+#[UniqueEntity(fields: ['name'])]
 #[API\ApiResource(
     uriTemplate: '/photo/locations',
     operations: [
@@ -36,6 +39,7 @@ class PhotoLocation
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank()]
     private ?string $name = null;
 
     public function getId(): ?int

@@ -6,8 +6,11 @@ use ApiPlatform\Metadata as API;
 use App\Repository\PhotoExhibitRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PhotoExhibitRepository::class)]
+#[UniqueEntity(fields: ['title'])]
 #[API\ApiResource(
     uriTemplate: '/photo/exhibit',
     operations: [
@@ -37,6 +40,7 @@ class PhotoExhibit
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank()]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
