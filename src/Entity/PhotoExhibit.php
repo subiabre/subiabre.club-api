@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata as API;
 use App\Repository\PhotoExhibitRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -46,6 +48,17 @@ class PhotoExhibit
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
+    #[ORM\ManyToMany(targetEntity: PhotoImage::class, inversedBy: 'exhibits')]
+    private Collection $images;
+
+    #[ORM\ManyToOne]
+    private ?PhotoLocation $location = null;
+
+    public function __construct()
+    {
+        $this->images = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -71,6 +84,42 @@ class PhotoExhibit
     public function setDescription(?string $description): self
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PhotoImage>
+     */
+    public function getImages(): Collection
+    {
+        return $this->images;
+    }
+
+    public function addImage(PhotoImage $image): self
+    {
+        if (!$this->images->contains($image)) {
+            $this->images->add($image);
+        }
+
+        return $this;
+    }
+
+    public function removeImage(PhotoImage $image): self
+    {
+        $this->images->removeElement($image);
+
+        return $this;
+    }
+
+    public function getLocation(): ?PhotoLocation
+    {
+        return $this->location;
+    }
+
+    public function setLocation(?PhotoLocation $location): self
+    {
+        $this->location = $location;
 
         return $this;
     }
