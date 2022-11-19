@@ -20,7 +20,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
         )
     ],
     operations: [
-        new API\GetCollection(security: "is_granted('USER_IS', request)"),
+        new API\GetCollection(security: "is_granted('REQUEST_USER_IS_IN', request)"),
     ]
 )]
 #[API\ApiResource(

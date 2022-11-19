@@ -19,11 +19,11 @@ use Doctrine\ORM\Mapping as ORM;
         )
     ],
     operations: [
-        new API\GetCollection(security: "is_granted('USER_IS', request)"),
+        new API\GetCollection(security: "is_granted('REQUEST_USER_IS_IN', request)"),
         new API\Post(
             provider: UserKeyStateProvider::class,
             processor: UserKeyStateProcessor::class,
-            security: "is_granted('USER_IS', request)"
+            security: "is_granted('REQUEST_USER_IS_IN', request)"
         )
     ]
 )]
@@ -41,7 +41,7 @@ use Doctrine\ORM\Mapping as ORM;
     operations: [
         new API\Get(),
         new API\Delete(
-            security: "is_granted('USER_IS', request)"
+            security: "is_granted('REQUEST_USER_IS_IN', request)"
         )
     ]
 )]

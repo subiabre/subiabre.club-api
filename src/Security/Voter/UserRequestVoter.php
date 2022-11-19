@@ -11,7 +11,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class UserRequestVoter extends Voter
 {
-    public const USER_IS = 'USER_IS';
+    public const REQUEST_USER_IS_IN = 'REQUEST_USER_IS_IN';
 
     public function __construct(
         private Security $security,
@@ -21,7 +21,7 @@ class UserRequestVoter extends Voter
 
     protected function supports(string $attribute, $subject): bool
     {
-        return in_array($attribute, [self::USER_IS])
+        return in_array($attribute, [self::REQUEST_USER_IS_IN])
             && ($subject instanceof Request );
     }
 
@@ -36,7 +36,7 @@ class UserRequestVoter extends Voter
 
         // ... (check conditions and return true to grant permission) ...
         switch ($attribute) {
-            case self::USER_IS:
+            case self::REQUEST_USER_IS_IN:
                 /** @var Request */
                 $request = $subject;
 
