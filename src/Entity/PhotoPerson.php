@@ -44,7 +44,7 @@ class PhotoPerson
     #[Assert\NotBlank()]
     private ?string $name = null;
 
-    #[ORM\OneToMany(mappedBy: 'person', targetEntity: PhotoImagePortrait::class)]
+    #[ORM\OneToMany(mappedBy: 'person', targetEntity: PhotoPortrait::class)]
     private Collection $portraits;
 
     public function __construct()
@@ -70,14 +70,14 @@ class PhotoPerson
     }
 
     /**
-     * @return Collection<int, PhotoImagePortrait>
+     * @return Collection<int, PhotoPortrait>
      */
     public function getPortraits(): Collection
     {
         return $this->portraits;
     }
 
-    public function addPortrait(PhotoImagePortrait $portrait): self
+    public function addPortrait(PhotoPortrait $portrait): self
     {
         if (!$this->portraits->contains($portrait)) {
             $this->portraits->add($portrait);
@@ -87,7 +87,7 @@ class PhotoPerson
         return $this;
     }
 
-    public function removePortrait(PhotoImagePortrait $portrait): self
+    public function removePortrait(PhotoPortrait $portrait): self
     {
         if ($this->portraits->removeElement($portrait)) {
             // set the owning side to null (unless already changed)

@@ -13,14 +13,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PhotoImageRepository::class)]
 #[API\ApiResource(
-    uriTemplate: '/photo/image',
+    uriTemplate: '/photo/images',
     operations: [
         new API\GetCollection(),
         new API\Post()
     ]
 )]
 #[API\ApiResource(
-    uriTemplate: '/photo/image/{id}',
+    uriTemplate: '/photo/images/{id}',
     uriVariables: [
         'id' => new API\Link(
             fromClass: PhotoImage::class
@@ -49,7 +49,7 @@ class PhotoImage
     #[Assert\NotBlank()]
     private ?string $url = null;
 
-    #[ORM\OneToMany(mappedBy: 'image', targetEntity: PhotoImagePortrait::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'image', targetEntity: PhotoPortrait::class, orphanRemoval: true)]
     private Collection $portraits;
 
     #[ORM\ManyToMany(targetEntity: PhotoExhibit::class, mappedBy: 'images')]
@@ -79,14 +79,14 @@ class PhotoImage
     }
 
     /**
-     * @return Collection<int, PhotoImagePortrait>
+     * @return Collection<int, PhotoPortrait>
      */
     public function getPortraits(): Collection
     {
         return $this->portraits;
     }
 
-    public function addPortrait(PhotoImagePortrait $portrait): self
+    public function addPortrait(PhotoPortrait $portrait): self
     {
         if (!$this->portraits->contains($portrait)) {
             $this->portraits->add($portrait);
@@ -96,7 +96,7 @@ class PhotoImage
         return $this;
     }
 
-    public function removePortrait(PhotoImagePortrait $portrait): self
+    public function removePortrait(PhotoPortrait $portrait): self
     {
         if ($this->portraits->removeElement($portrait)) {
             // set the owning side to null (unless already changed)

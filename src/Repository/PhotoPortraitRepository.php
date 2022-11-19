@@ -2,26 +2,26 @@
 
 namespace App\Repository;
 
-use App\Entity\PhotoImagePortrait;
+use App\Entity\PhotoPortrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<PhotoImagePortrait>
+ * @extends ServiceEntityRepository<PhotoPortrait>
  *
- * @method PhotoImagePortrait|null find($id, $lockMode = null, $lockVersion = null)
- * @method PhotoImagePortrait|null findOneBy(array $criteria, array $orderBy = null)
- * @method PhotoImagePortrait[]    findAll()
- * @method PhotoImagePortrait[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method PhotoPortrait|null find($id, $lockMode = null, $lockVersion = null)
+ * @method PhotoPortrait|null findOneBy(array $criteria, array $orderBy = null)
+ * @method PhotoPortrait[]    findAll()
+ * @method PhotoPortrait[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class PhotoImagePortraitRepository extends ServiceEntityRepository
+class PhotoPortraitRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, PhotoImagePortrait::class);
+        parent::__construct($registry, PhotoPortrait::class);
     }
 
-    public function save(PhotoImagePortrait $entity, bool $flush = false): void
+    public function save(PhotoPortrait $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class PhotoImagePortraitRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(PhotoImagePortrait $entity, bool $flush = false): void
+    public function remove(PhotoPortrait $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -40,7 +40,7 @@ class PhotoImagePortraitRepository extends ServiceEntityRepository
     }
 
 //    /**
-//     * @return PhotoImagePortrait[] Returns an array of PhotoImagePortrait objects
+//     * @return PhotoPortrait[] Returns an array of PhotoPortrait objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -54,7 +54,7 @@ class PhotoImagePortraitRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?PhotoImagePortrait
+//    public function findOneBySomeField($value): ?PhotoPortrait
 //    {
 //        return $this->createQueryBuilder('p')
 //            ->andWhere('p.exampleField = :val')

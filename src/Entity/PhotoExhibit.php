@@ -18,14 +18,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: PhotoExhibitRepository::class)]
 #[UniqueEntity(fields: ['title'])]
 #[API\ApiResource(
-    uriTemplate: '/photo/exhibit',
+    uriTemplate: '/photo/exhibits',
     operations: [
         new API\GetCollection(),
         new API\Post()
     ]
 )]
 #[API\ApiResource(
-    uriTemplate: '/photo/exhibit/{id}',
+    uriTemplate: '/photo/exhibits/{id}',
     uriVariables: [
         'id' => new API\Link(
             fromClass: PhotoExhibit::class

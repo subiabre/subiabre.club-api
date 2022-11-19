@@ -2,35 +2,25 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\ExistsFilter;
 use ApiPlatform\Metadata as API;
-use App\Repository\PhotoImagePortraitRepository;
-use App\State\PhotoImagePortraitStateProvider;
+use App\Repository\PhotoPortraitRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity(repositoryClass: PhotoImagePortraitRepository::class)]
+#[ORM\Entity(repositoryClass: PhotoPortraitRepository::class)]
 #[API\ApiResource(
-    uriTemplate: '/photo/image/{imageId}/portraits',
-    uriVariables: [
-        'imageId' => new API\Link(
-            fromClass: PhotoImage::class,
-            toProperty: 'image'
-        )
-    ],
+    uriTemplate: '/photo/portraits',
     operations: [
         new API\GetCollection(),
-        new API\Post(provider: PhotoImagePortraitStateProvider::class)
+        new API\Post()
     ]
 )]
 #[API\ApiResource(
-    uriTemplate: '/photo/image/{imageId}/portraits/{id}',
+    uriTemplate: '/photo/portraits/{id}',
     uriVariables: [
-        'imageId' => new API\Link(
-            fromClass: PhotoImage::class,
-            toProperty: 'image'
-        ),
         'id' => new API\Link(
-            fromClass: PhotoImagePortrait::class
+            fromClass: PhotoPortrait::class
         )
     ],
     operations: [
@@ -40,7 +30,11 @@ use Symfony\Component\Validator\Constraints as Assert;
         new API\Patch()
     ]
 )]
-class PhotoImagePortrait
+#[API\ApiFilter(
+    filterClass: ExistsFilter::class,
+    properties: ['person']
+)]
+class PhotoPortrait
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -49,7 +43,7 @@ class PhotoImagePortrait
 
     #[ORM\ManyToOne(inversedBy: 'portraits')]
     #[ORM\JoinColumn(nullable: false)]
-    #[API\ApiProperty(writable: false)]
+    #[Assert\NotNull()]
     private ?PhotoImage $image = null;
 
     #[ORM\ManyToOne(inversedBy: 'portraits')]
