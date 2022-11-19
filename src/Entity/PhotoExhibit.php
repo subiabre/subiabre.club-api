@@ -2,7 +2,10 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Metadata as API;
+use ApiPlatform\Metadata\ApiFilter;
 use App\Repository\PhotoExhibitRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -34,6 +37,24 @@ use Symfony\Component\Validator\Constraints as Assert;
         new API\Patch()
     ]
 )]
+#[ApiFilter(
+    filterClass: DateFilter::class,
+    properties: [
+        'dateMin',
+        'dateMax'
+    ]
+)]
+#[ApiFilter(
+    filterClass: OrderFilter::class,
+    properties: [
+        'id',
+        'dateMin',
+        'dateMax'
+    ],
+    arguments: [
+        'orderParameterName' => 'order'
+    ]
+)]
 class PhotoExhibit
 {
     #[ORM\Id]
@@ -53,6 +74,12 @@ class PhotoExhibit
 
     #[ORM\ManyToOne]
     private ?PhotoLocation $location = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $dateMin = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $dateMax = null;
 
     public function __construct()
     {
@@ -120,6 +147,30 @@ class PhotoExhibit
     public function setLocation(?PhotoLocation $location): self
     {
         $this->location = $location;
+
+        return $this;
+    }
+
+    public function getDateMin(): ?\DateTimeInterface
+    {
+        return $this->dateMin;
+    }
+
+    public function setDateMin(\DateTimeInterface $dateMin): self
+    {
+        $this->dateMin = $dateMin;
+
+        return $this;
+    }
+
+    public function getDateMax(): ?\DateTimeInterface
+    {
+        return $this->dateMax;
+    }
+
+    public function setDateMax(\DateTimeInterface $dateMax): self
+    {
+        $this->dateMax = $dateMax;
 
         return $this;
     }
