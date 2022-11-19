@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\ExistsFilter;
 use ApiPlatform\Metadata as API;
 use App\Repository\PhotoImageRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -31,6 +32,10 @@ use Symfony\Component\Validator\Constraints as Assert;
         new API\Delete(),
         new API\Patch()
     ]
+)]
+#[API\ApiFilter(
+    filterClass: ExistsFilter::class,
+    properties: ['exhibits']
 )]
 class PhotoImage
 {

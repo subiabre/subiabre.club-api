@@ -4,8 +4,9 @@ namespace App\Entity;
 
 use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata as API;
-use ApiPlatform\Metadata\ApiFilter;
+use App\Doctrine\PhotoExhibitPersonFilter;
 use App\Repository\PhotoExhibitRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -37,14 +38,25 @@ use Symfony\Component\Validator\Constraints as Assert;
         new API\Patch()
     ]
 )]
-#[ApiFilter(
+#[API\ApiFilter(
+    filterClass: SearchFilter::class,
+    properties: [
+        'location' => 'exact',
+        'location.name' => 'exact'
+    ]
+)]
+#[API\ApiFilter(
+    filterClass: PhotoExhibitPersonFilter::class,
+    properties: ['people']
+)]
+#[API\ApiFilter(
     filterClass: DateFilter::class,
     properties: [
         'dateMin',
         'dateMax'
     ]
 )]
-#[ApiFilter(
+#[API\ApiFilter(
     filterClass: OrderFilter::class,
     properties: [
         'id',
