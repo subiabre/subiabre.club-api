@@ -8,14 +8,14 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PhotoLocationRepository::class)]
 #[API\ApiResource(
-    uriTemplate: '/photos/locations',
+    uriTemplate: '/photo/locations',
     operations: [
         new API\GetCollection(),
         new API\Post()
     ]
 )]
 #[API\ApiResource(
-    uriTemplate: '/photos/locations/{id}',
+    uriTemplate: '/photo/locations/{id}',
     uriVariables: [
         'id' => new API\Link(
             fromClass: PhotoLocation::class
