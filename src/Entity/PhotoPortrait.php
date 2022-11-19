@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Doctrine\Orm\Filter\ExistsFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata as API;
 use App\Repository\PhotoPortraitRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -31,8 +31,8 @@ use Symfony\Component\Validator\Constraints as Assert;
     ]
 )]
 #[API\ApiFilter(
-    filterClass: ExistsFilter::class,
-    properties: ['person']
+    filterClass: SearchFilter::class,
+    properties: ['person' => 'exact']
 )]
 class PhotoPortrait
 {
@@ -47,6 +47,8 @@ class PhotoPortrait
     private ?PhotoImage $image = null;
 
     #[ORM\ManyToOne(inversedBy: 'portraits')]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull()]
     private ?PhotoPerson $person = null;
 
     #[ORM\Column]

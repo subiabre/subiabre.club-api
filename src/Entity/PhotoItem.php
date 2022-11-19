@@ -4,10 +4,10 @@ namespace App\Entity;
 
 use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
-use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata as API;
-use App\Doctrine\PhotoExhibitPersonFilter;
-use App\Repository\PhotoExhibitRepository;
+use App\Doctrine\PhotoItemLocationFilter;
+use App\Doctrine\PhotoItemPersonFilter;
+use App\Repository\PhotoItemRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -15,20 +15,20 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity(repositoryClass: PhotoExhibitRepository::class)]
+#[ORM\Entity(repositoryClass: PhotoItemRepository::class)]
 #[UniqueEntity(fields: ['title'])]
 #[API\ApiResource(
-    uriTemplate: '/photo/exhibits',
+    uriTemplate: '/photo/items',
     operations: [
         new API\GetCollection(),
         new API\Post()
     ]
 )]
 #[API\ApiResource(
-    uriTemplate: '/photo/exhibits/{id}',
+    uriTemplate: '/photo/items/{id}',
     uriVariables: [
         'id' => new API\Link(
-            fromClass: PhotoExhibit::class
+            fromClass: PhotoItem::class
         )
     ],
     operations: [
@@ -39,15 +39,22 @@ use Symfony\Component\Validator\Constraints as Assert;
     ]
 )]
 #[API\ApiFilter(
-    filterClass: SearchFilter::class,
-    properties: [
-        'location' => 'exact',
-        'location.name' => 'exact'
-    ]
+    filterClass: PhotoItemLocationFilter::class,
+    properties: ['location']
 )]
 #[API\ApiFilter(
-    filterClass: PhotoExhibitPersonFilter::class,
-    properties: ['people']
+    filterClass: PhotoItemPersonFilter::class,
+    properties: ['person']
+)]
+#[API\ApiFilter(
+    filterClass: OrderFilter::class,
+    properties: [
+        'dateMin',
+        'dateMax'
+    ],
+    arguments: [
+        'orderParameterName' => 'order'
+    ]
 )]
 #[API\ApiFilter(
     filterClass: DateFilter::class,
@@ -56,18 +63,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         'dateMax'
     ]
 )]
-#[API\ApiFilter(
-    filterClass: OrderFilter::class,
-    properties: [
-        'id',
-        'dateMin',
-        'dateMax'
-    ],
-    arguments: [
-        'orderParameterName' => 'order'
-    ]
-)]
-class PhotoExhibit
+class PhotoItem
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -81,10 +77,9 @@ class PhotoExhibit
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\ManyToMany(targetEntity: PhotoImage::class, inversedBy: 'exhibits')]
-    private Collection $images;
-
     #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull()]
     private ?PhotoLocation $location = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -92,6 +87,9 @@ class PhotoExhibit
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $dateMax = null;
+
+    #[ORM\OneToMany(mappedBy: 'item', targetEntity: PhotoImage::class)]
+    private Collection $images;
 
     public function __construct()
     {
@@ -123,30 +121,6 @@ class PhotoExhibit
     public function setDescription(?string $description): self
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, PhotoImage>
-     */
-    public function getImages(): Collection
-    {
-        return $this->images;
-    }
-
-    public function addImage(PhotoImage $image): self
-    {
-        if (!$this->images->contains($image)) {
-            $this->images->add($image);
-        }
-
-        return $this;
-    }
-
-    public function removeImage(PhotoImage $image): self
-    {
-        $this->images->removeElement($image);
 
         return $this;
     }
@@ -183,6 +157,36 @@ class PhotoExhibit
     public function setDateMax(\DateTimeInterface $dateMax): self
     {
         $this->dateMax = $dateMax;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PhotoImage>
+     */
+    public function getImages(): Collection
+    {
+        return $this->images;
+    }
+
+    public function addImage(PhotoImage $photoImage): self
+    {
+        if (!$this->images->contains($photoImage)) {
+            $this->images->add($photoImage);
+            $photoImage->setItem($this);
+        }
+
+        return $this;
+    }
+
+    public function removeImage(PhotoImage $photoImage): self
+    {
+        if ($this->images->removeElement($photoImage)) {
+            // set the owning side to null (unless already changed)
+            if ($photoImage->getItem() === $this) {
+                $photoImage->setItem(null);
+            }
+        }
 
         return $this;
     }

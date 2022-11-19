@@ -35,7 +35,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 )]
 #[API\ApiFilter(
     filterClass: ExistsFilter::class,
-    properties: ['exhibits']
+    properties: ['item']
 )]
 class PhotoImage
 {
@@ -52,13 +52,12 @@ class PhotoImage
     #[ORM\OneToMany(mappedBy: 'image', targetEntity: PhotoPortrait::class, orphanRemoval: true)]
     private Collection $portraits;
 
-    #[ORM\ManyToMany(targetEntity: PhotoExhibit::class, mappedBy: 'images')]
-    private Collection $exhibits;
+    #[ORM\ManyToOne(inversedBy: 'photoImages')]
+    private ?PhotoItem $item = null;
 
     public function __construct()
     {
         $this->portraits = new ArrayCollection();
-        $this->exhibits = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -108,29 +107,14 @@ class PhotoImage
         return $this;
     }
 
-    /**
-     * @return Collection<int, PhotoExhibit>
-     */
-    public function getExhibits(): Collection
+    public function getItem(): ?PhotoItem
     {
-        return $this->exhibits;
+        return $this->item;
     }
 
-    public function addExhibit(PhotoExhibit $exhibit): self
+    public function setItem(?PhotoItem $item): self
     {
-        if (!$this->exhibits->contains($exhibit)) {
-            $this->exhibits->add($exhibit);
-            $exhibit->addImage($this);
-        }
-
-        return $this;
-    }
-
-    public function removeExhibit(PhotoExhibit $exhibit): self
-    {
-        if ($this->exhibits->removeElement($exhibit)) {
-            $exhibit->removeImage($this);
-        }
+        $this->item = $item;
 
         return $this;
     }

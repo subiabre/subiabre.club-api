@@ -8,7 +8,7 @@ use ApiPlatform\Metadata\Operation;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\PropertyInfo\Type;
 
-final class PhotoExhibitPersonFilter extends AbstractFilter
+final class PhotoItemLocationFilter extends AbstractFilter
 {
     protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, Operation $operation = null, array $context = []): void
     {
@@ -21,11 +21,8 @@ final class PhotoExhibitPersonFilter extends AbstractFilter
 
         $alias = $queryBuilder->getRootAliases()[0];
         $queryBuilder
-            ->innerJoin(sprintf('%s.images', $alias), 'pi')
-            ->innerJoin(sprintf('%s.portraits', 'pi'), 'ps')
-            ->innerJoin(sprintf('%s.person', 'ps'), 'pp')
-            ->where('pp IN (:people)')
-            ->setParameter('people', $value);
+            ->andWhere(sprintf('%s.location IN (:locationList)', $alias))
+            ->setParameter('locationList', explode(',', $value));
     }
 
     // This function is only used to hook in documentation generators (supported by Swagger and Hydra)
