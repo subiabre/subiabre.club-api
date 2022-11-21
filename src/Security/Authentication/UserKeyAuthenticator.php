@@ -26,7 +26,7 @@ class UserKeyAuthenticator extends AbstractAuthenticator
 
     public function supports(Request $request): ?bool
     {
-        if ($request->getMethod() === Request::METHOD_POST && $request->getPathInfo() === '/api/auth/key') {
+        if ($request->getMethod() === Request::METHOD_POST && $request->getPathInfo() === '/api/authentication/key') {
             return true;
         }
 

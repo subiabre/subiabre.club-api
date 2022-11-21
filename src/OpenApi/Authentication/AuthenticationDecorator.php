@@ -17,10 +17,10 @@ final class AuthenticationDecorator implements OpenApiFactoryInterface
         $openApi = ($this->decorated)($context);
 
         $pathItem = new Model\PathItem(
-            ref: 'Auth',
+            ref: 'Authentication',
             get: new Model\Operation(
                 operationId: 'getUserSessionItem',
-                tags: ['Auth'],
+                tags: ['Authentication'],
                 responses: [
                     '204' => [
                         'description' => 'Get authenticated UserSession resource',
@@ -40,13 +40,13 @@ final class AuthenticationDecorator implements OpenApiFactoryInterface
             ),
         );
 
-        $openApi->getPaths()->addPath('/api/auth', $pathItem);
+        $openApi->getPaths()->addPath('/api/authentication', $pathItem);
 
         $pathItem = new Model\PathItem(
-            ref: 'Auth',
+            ref: 'Authentication',
             post: new Model\Operation(
                 operationId: 'postUserAuth',
-                tags: ['Auth'],
+                tags: ['Authentication'],
                 responses: [
                     '204' => [
                         'description' => 'Get authenticated UserSession resource',
@@ -92,13 +92,13 @@ final class AuthenticationDecorator implements OpenApiFactoryInterface
             ),
         );
 
-        $openApi->getPaths()->addPath('/api/auth/user', $pathItem);
+        $openApi->getPaths()->addPath('/api/authentication/user', $pathItem);
 
         $pathItem = new Model\PathItem(
-            ref: 'Auth',
+            ref: 'Authentication',
             post: new Model\Operation(
                 operationId: 'postUserKeyAuth',
-                tags: ['Auth'],
+                tags: ['Authentication'],
                 responses: [
                     '204' => [
                         'description' => 'Get authenticated UserSession resource',
@@ -139,7 +139,7 @@ final class AuthenticationDecorator implements OpenApiFactoryInterface
             ),
         );
 
-        $openApi->getPaths()->addPath('/api/auth/key', $pathItem);
+        $openApi->getPaths()->addPath('/api/authentication/key', $pathItem);
 
         return $openApi;
     }
