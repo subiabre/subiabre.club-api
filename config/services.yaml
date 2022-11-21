@@ -20,11 +20,11 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
-    App\OpenApi\AuthenticationDecorator:
+    App\OpenApi\Authentication\AuthenticationDecorator:
         decorates: 'api_platform.openapi.factory'
         arguments: ['@.inner']
 
-    App\Service\AuthenticationService:
+    App\Service\Authentication\AuthenticationService:
         arguments:
             - '%env(CORS_ALLOW_ORIGIN)%'
             - '%env(SESSION_LIFETIME)%'
